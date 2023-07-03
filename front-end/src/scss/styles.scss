@@ -7,23 +7,31 @@ h2{
   font-size: 36px;
   font-weight: bold;
 }
+
 main div{
   height: 200px;
   width:200px;
+  background-position: center;
+  background-size: contain;
   //background-color: deeppink;
 }
 h2 {
   margin: auto;
 }
 main{
-  position: relative;
+  div span{
+    z-index: 150;
+    color: blue;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
 }
 body{
   display: flex;
   flex-direction: column;
 }
 #overlay{
-  position: absolute;
+  position: fixed;
   top: 0;
   z-index: 10;
   background-color: rgba(255,255,255,0.5);
@@ -33,6 +41,8 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+
 }
 #drop-area {
   height: 60%;
@@ -46,10 +56,11 @@ body{
 
   svg {
     position: absolute;
-   color: blue;
+    color: blue;
+    opacity: 0.5;
     z-index: 110;
-    width: 75%;
-    height: 75%;
+    width: 50%;
+    height: 50%;
     animation-name: abc;
     animation-duration: 2000ms;
     animation-iteration-count: infinite;
@@ -58,25 +69,31 @@ body{
 
   @keyframes abc {
     from {
-      top: 140px;
+      top: 50%;
     }
-    25%{
-    top:70px;
+    20%{
+    top:40%;
 
     }
-    50% {
-      top: 0px;
+    40% {
+      top: 30%;
+    }
+    60% {
+      top: 20%;
+    }
+    80% {
+      top: 10%;
     }
     to {
-      top: -40px;
+      top: 0;
     }
 
   }
 }
 
 .loader {
-  width: 100%;
-  height: 100%;
+  //width: 100%;
+  //height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -47,28 +47,29 @@ function uploadImages(images){
         const divElm =$('<div class="image loader"></div>');
         divElm.append(cssLoaderHtml);
         mainElm.append(divElm);
-        formData.append("image",imageFile);
+        formData.append("images",imageFile);
 
     });
-    const jqxhr =$.ajax(`${REST_API_URL}/images`,{
+    const jqxhr =$.ajax(`${REST_API_URL}/api/v1/images`,{
         method:'POST',
         data:formData,
         contentType:false, //by default jquery use application/x-www-form-urlencoded;
         processData:false //by default jquery try to convert data intoString;
     });
     jqxhr.done((imageList)=>{
+        console.log(imageList[0])
         imageList.forEach(imageUrl=>{
-            const divElm =$('.image .loader').first();
-            divElm.css('background-image',`url('${imageUrl}')`);
-            divElm.empty();
+            const divElm =$(".image.loader").first();
             divElm.removeClass('loader');
+            divElm.empty();
+            divElm.css('background-image',`url('${imageUrl}')`);
 
         });
     });
-    jqxhr.always(()=>$(".image .loader").remove());
+    // jqxhr.always(()=>$(".image.loader").remove());
 }
 function loadAllImages(){
-    const jqxhr =$.ajax(`${REST_API_URL}/images`);
+    const jqxhr =$.ajax(`${REST_API_URL}/api/v1/images`);
     jqxhr.done((imgeList)=>{
         imgeList.forEach(imageUrl=>{
             const divElm =$('<div class="image"></div>');
