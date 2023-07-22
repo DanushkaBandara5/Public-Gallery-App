@@ -1,13 +1,18 @@
 package lk.ijse.dep10.app.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Part;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,11 +44,8 @@ public class ImageHttpController {
     public String downloadImages(@RequestParam(name = "q") String imageUrl) {
         try {
             imageUrl="images/"+imageUrl;
-            System.out.println(imageUrl);
             String realPath = servletContext.getRealPath(imageUrl);
-            System.out.println(realPath);
             File file = new File(realPath);
-            System.out.println(file.exists());
             FileInputStream fis = new FileInputStream(file);
             byte[]bytes=new byte[(int)file.length()];
             fis.read(bytes);
@@ -59,5 +61,38 @@ public class ImageHttpController {
         }
 
 
+    }
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public List<String> postImage(@RequestPart("images") List<Part> imageFiles,UriComponentsBuilder uriComponentsBuilder){
+        List<String> imageUrlList =new ArrayList<>();
+        if(imageFiles!=null){
+            String imageDirPath = servletContext.getRealPath("/images");
+            for (Part imageFile : imageFiles) {
+                String imageFilePath = new File(imageDirPath, imageFile.getSubmittedFileName()).getAbsolutePath();
+                try{
+                    imageFile.write(imageFilePath);
+                    UriComponentsBuilder cloneBuilder = uriComponentsBuilder.cloneBuilder();
+                    String imagesLink = cloneBuilder.pathSegment("images", imageFile.getSubmittedFileName()).toUriString();
+                    imageUrlList.add(imagesLink);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }
+        return imageUrlList;
+    }
+
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @GetMapping("/delete")
+    public void deleteImage(@RequestParam(name = "q") String imageUrl){
+        imageUrl="images/"+imageUrl;
+        String realPath = servletContext.getRealPath(imageUrl);
+        File file = new File(realPath);
+        if(!file.exists()) return;
+        file.delete();
     }
 }
