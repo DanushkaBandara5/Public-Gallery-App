@@ -134,7 +134,11 @@ function byteArrayToFile(byteArray, fileName) {
     URL.revokeObjectURL(objectURL);
 }
 function deleteFile(name,elm) {
-    const ajax=$.ajax(`${REST_API_URL}/api/v1/images?q=${name}`,'DELETE');
+    const ajax=$.ajax(`${REST_API_URL}/api/v1/images/${name}`,{
+        method: 'DELETE',
+
+
+    });
     ajax.done(()=>{
         elm.remove();
     })
